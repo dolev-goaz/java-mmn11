@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class WarGame {
+    private static final int DRAW = 0;
     private static final int FIRST_PLAYER_INDEX = 1;
     private static final int SECOND_PLAYER_INDEX = 2;
     private static final int DOWN_CARDS_PER_WAR = 2;
@@ -13,6 +14,7 @@ public class WarGame {
     DeckOfCards firstPlayerDeck;
     DeckOfCards secondPlayerDeck;
 
+    // these collect the cards played by each player during the turn
     ArrayList<Card> firstPlayerPlayedCards;
     ArrayList<Card> secondPlayerPlayedCards;
 
@@ -24,64 +26,80 @@ public class WarGame {
         secondPlayerPlayedCards = new ArrayList<Card>();
     }
 
+    // Extracted from the constructor to allow multiple games to be played on the same instance
     public void initializeGame() {
         firstPlayerDeck.clear();
         secondPlayerDeck.clear();
+
+        // Initialize player decks
         DeckOfCards deck = new DeckOfCards(true);
         deck.shuffle();
         final int dealCount =  DeckOfCards.MAX_CARDS_IN_DECK / 2;
-
         for (int cardIndex = 0; cardIndex < dealCount; cardIndex++) {
             firstPlayerDeck.insertEnd(deck.dealCard());
             secondPlayerDeck.insertEnd(deck.dealCard());
         }
     }
 
-    public Card dealCard(DeckOfCards deckOfCards, int playerIndex) {
-        Card c = deckOfCards.dealCard();
+    // If the deck is not empty, deals a card from the provided player's deck./
+    // Returns null if the deck is empty.
+    public Card dealCard(int playerIndex) {
+        // NOTE: We're passing only the index since we need to fetch two variables relevant to the player,
+        // so it's cleaner this way.
+        DeckOfCards playerDeck = (playerIndex == FIRST_PLAYER_INDEX)
+                ? this.firstPlayerDeck
+                : this.secondPlayerDeck;
+        Card c = playerDeck.dealCard();
         if (c == null) {
             return null;
         }
         Collection<Card> accumulator = (playerIndex == FIRST_PLAYER_INDEX)
-                ? firstPlayerPlayedCards
-                : secondPlayerPlayedCards;
+                ? this.firstPlayerPlayedCards
+                : this.secondPlayerPlayedCards;
         accumulator.add(c);
         return c;
     }
 
+    // Compares the cards of the two cards, taking into account whether one of them is null.
     public int comparePlayerCards(Card firstPlayerCard, Card secondPlayerCard) {
-        if (firstPlayerCard == null && secondPlayerCard == null) {
-            // should NEVER happen
-            // should probably raise exception in this case
+        // if both decks were empty
+        if ((firstPlayerCard == null) && (secondPlayerCard == null)) {
+            // NOTE: this should NEVER happen
+            // could raise an exception
             System.out.println("Both decks are out of cards");
             return -1;
         }
+        // if first deck is empty
         if (firstPlayerCard == null) {
-            return 2;
+            return SECOND_PLAYER_INDEX;
         }
+        // if second deck is empty
         if (secondPlayerCard == null) {
-            return 1;
+            return FIRST_PLAYER_INDEX;
         }
 
+        // no deck was empty- compare the actual values
         int value1 = firstPlayerCard.getValue();
         int value2 = secondPlayerCard.getValue();
-        if (value1 == value2) return 0;
-        if (value1 > value2) return 1;
-        return 2;
+        if (value1 == value2) return DRAW; // tie
+        if (value1 > value2) return FIRST_PLAYER_INDEX; // player 1 won
+        return SECOND_PLAYER_INDEX; // player 2 won
     }
 
+    // Initiates a war/new war between the players
     public int War() {
+        // draw DOWN_CARDS_PER_WAR cards from each deck
         for (int i = 0; i < DOWN_CARDS_PER_WAR; i++) {
-            if (dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX) == null) {
-                return 2;
+            if (dealCard(FIRST_PLAYER_INDEX) == null) {
+                return SECOND_PLAYER_INDEX;
             }
-            if (dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX) == null) {
-                return 1;
+            if (dealCard(SECOND_PLAYER_INDEX) == null) {
+                return FIRST_PLAYER_INDEX;
             }
         }
-
-        Card c1 = dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX);
-        Card c2 = dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX);
+        // Compare the top cards
+        Card c1 = dealCard(FIRST_PLAYER_INDEX);
+        Card c2 = dealCard(SECOND_PLAYER_INDEX);
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
             return War();
@@ -90,8 +108,8 @@ public class WarGame {
     }
 
     public int runTurn() {
-        Card c1 = dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX);
-        Card c2 = dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX);
+        Card c1 = dealCard(FIRST_PLAYER_INDEX);
+        Card c2 = dealCard(SECOND_PLAYER_INDEX);
 
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
@@ -116,16 +134,18 @@ public class WarGame {
             winnerDeck.insertEnd(secondPlayerPlayedCards);
         }
 
-        return firstPlayerDeck.isEmpty()? 2: 1;
+        return firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
     }
 
+    // Here, we use listeners in order to send events from the WarGame instance.
+    // This way, we can decouple the actual drawing logic from the WarGame runner.
 
-    // Method to register listeners
+    // Register a new listener
     public void addTurnListener(ITurnListener listener) {
         cardListeners.add(listener);
     }
 
-    // Method to notify listeners about turn being played
+    // Notify listeners about the turn being played
     private void notifyListeners_OnTurnPlayed(int winner) {
         // NOTE: assumes both players have played one card.
         Card firstPlayerCard = this.firstPlayerPlayedCards.get(0);
@@ -136,7 +156,7 @@ public class WarGame {
         }
     }
 
-    // Method to notify listeners about turn being played
+    // Notify listeners about a war being played
     private void notifyListeners_OnWarPlayed(int winner) {
         for (ITurnListener listener : cardListeners) {
             listener.onWarPlayed(this.firstPlayerPlayedCards, this.secondPlayerPlayedCards, winner);

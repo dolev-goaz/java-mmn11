@@ -15,6 +15,7 @@ public class Card {
     public int getValue() {
         for (int i = 0; i < faces.length; i++) {
             if (this.face.equals(Card.faces[i])) {
+                // + 1 because indexes start from 0 and values start from 1
                 return i + 1;
             }
         }

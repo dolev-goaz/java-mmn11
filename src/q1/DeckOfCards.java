@@ -21,10 +21,13 @@ public class DeckOfCards {
         }
     }
 
+    // Shuffles the deck
     public void shuffle() {
         Collections.shuffle(this.cards);
     }
 
+    // Removes and returns the last card from the deck.
+    // If the deck is empty, returns null
     public Card dealCard() {
         final int lastCardIndex = cards.size() - 1;
         if (lastCardIndex < 0) {
@@ -33,18 +36,22 @@ public class DeckOfCards {
         return cards.remove(lastCardIndex);
     }
 
+    // Inserts a single card to the deck
     public void insertEnd(Card card) {
         this.cards.add(card);
     }
 
+    // Inserts a collection of cards to the deck
     public void insertEnd(Collection<Card> cards) {
         this.cards.addAll(cards);
     }
 
+    // Clears the deck
     public void clear() {
         this.cards.clear();
     }
 
+    // Checks if the deck is empty
     public boolean isEmpty() {
         return this.cards.isEmpty();
     }
