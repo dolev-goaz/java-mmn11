@@ -7,7 +7,7 @@ public class WarGame {
     private static final int DRAW = 0;
     private static final int FIRST_PLAYER_INDEX = 1;
     private static final int SECOND_PLAYER_INDEX = 2;
-    private static final int DOWN_CARDS_PER_WAR = 2;
+    public static final int DOWN_CARDS_PER_WAR = 2;
 
     private Collection<ITurnListener> cardListeners = new ArrayList<>();
 
