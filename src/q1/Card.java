@@ -20,4 +20,9 @@ public class Card {
         }
         return -1;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s of %s", this.face, this.suit);
+    }
 }

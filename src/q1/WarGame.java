@@ -1,40 +1,51 @@
 package q1;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WarGame {
+    private static final int FIRST_PLAYER_INDEX = 1;
+    private static final int SECOND_PLAYER_INDEX = 2;
     private static final int DOWN_CARDS_PER_WAR = 2;
-    DeckOfCards firstPlayer;
-    DeckOfCards secondPlayer;
 
-    ArrayList<Card> turnAccumulator;
+    private Collection<ITurnListener> cardListeners = new ArrayList<>();
+
+    DeckOfCards firstPlayerDeck;
+    DeckOfCards secondPlayerDeck;
+
+    ArrayList<Card> firstPlayerPlayedCards;
+    ArrayList<Card> secondPlayerPlayedCards;
 
     public WarGame() {
-        firstPlayer = new DeckOfCards();
-        secondPlayer = new DeckOfCards();
+        firstPlayerDeck = new DeckOfCards();
+        secondPlayerDeck = new DeckOfCards();
 
-        turnAccumulator = new ArrayList<Card>();
+        firstPlayerPlayedCards = new ArrayList<Card>();
+        secondPlayerPlayedCards = new ArrayList<Card>();
     }
 
     public void initializeGame() {
-        firstPlayer.clear();
-        secondPlayer.clear();
+        firstPlayerDeck.clear();
+        secondPlayerDeck.clear();
         DeckOfCards deck = new DeckOfCards(true);
         deck.shuffle();
         final int dealCount =  DeckOfCards.MAX_CARDS_IN_DECK / 2;
 
         for (int cardIndex = 0; cardIndex < dealCount; cardIndex++) {
-            firstPlayer.insertEnd(deck.dealCard());
-            secondPlayer.insertEnd(deck.dealCard());
+            firstPlayerDeck.insertEnd(deck.dealCard());
+            secondPlayerDeck.insertEnd(deck.dealCard());
         }
     }
 
-    public Card dealCardWithPool(DeckOfCards deckOfCards) {
+    public Card dealCard(DeckOfCards deckOfCards, int playerIndex) {
         Card c = deckOfCards.dealCard();
         if (c == null) {
             return null;
         }
-        turnAccumulator.add(c);
+        Collection<Card> accumulator = (playerIndex == FIRST_PLAYER_INDEX)
+                ? firstPlayerPlayedCards
+                : secondPlayerPlayedCards;
+        accumulator.add(c);
         return c;
     }
 
@@ -61,16 +72,16 @@ public class WarGame {
 
     public int War() {
         for (int i = 0; i < DOWN_CARDS_PER_WAR; i++) {
-            if (dealCardWithPool(firstPlayer) == null) {
+            if (dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX) == null) {
                 return 2;
             }
-            if (dealCardWithPool(secondPlayer) == null) {
+            if (dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX) == null) {
                 return 1;
             }
         }
 
-        Card c1 = dealCardWithPool(firstPlayer);
-        Card c2 = dealCardWithPool(secondPlayer);
+        Card c1 = dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX);
+        Card c2 = dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX);
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
             return War();
@@ -79,27 +90,56 @@ public class WarGame {
     }
 
     public int runTurn() {
-        Card c1 = dealCardWithPool(firstPlayer);
-        Card c2 = dealCardWithPool(secondPlayer);
+        Card c1 = dealCard(firstPlayerDeck, FIRST_PLAYER_INDEX);
+        Card c2 = dealCard(secondPlayerDeck, SECOND_PLAYER_INDEX);
 
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
-            return War();
+            int warResult = War();
+            notifyListeners_OnWarPlayed(warResult);
+            return warResult;
         }
-
+        notifyListeners_OnTurnPlayed(comparisonResult);
         return comparisonResult;
     }
 
     public int runGame() {
-        // not necessary to check if second deck is empty
-        while (!firstPlayer.isEmpty() && !secondPlayer.isEmpty()) {
-            turnAccumulator.clear();
+        // NOTE: not really necessary to check if second deck is empty
+        while (!firstPlayerDeck.isEmpty() && !secondPlayerDeck.isEmpty()) {
+            firstPlayerPlayedCards.clear();
+            secondPlayerPlayedCards.clear();
+
             int winner = runTurn();
 
-            DeckOfCards winnerDeck = winner == 1? firstPlayer: secondPlayer;
-            winnerDeck.insertEnd(turnAccumulator);
+            DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
+            winnerDeck.insertEnd(firstPlayerPlayedCards);
+            winnerDeck.insertEnd(secondPlayerPlayedCards);
         }
 
-        return firstPlayer.isEmpty()? 2: 1;
+        return firstPlayerDeck.isEmpty()? 2: 1;
+    }
+
+
+    // Method to register listeners
+    public void addTurnListener(ITurnListener listener) {
+        cardListeners.add(listener);
+    }
+
+    // Method to notify listeners about turn being played
+    private void notifyListeners_OnTurnPlayed(int winner) {
+        // NOTE: assumes both players have played one card.
+        Card firstPlayerCard = this.firstPlayerPlayedCards.get(0);
+        Card secondPlayerCard = this.secondPlayerPlayedCards.get(0);
+
+        for (ITurnListener listener : cardListeners) {
+            listener.onTurnPlayed(firstPlayerCard, secondPlayerCard, winner);
+        }
+    }
+
+    // Method to notify listeners about turn being played
+    private void notifyListeners_OnWarPlayed(int winner) {
+        for (ITurnListener listener : cardListeners) {
+            listener.onWarPlayed(this.firstPlayerPlayedCards, this.secondPlayerPlayedCards, winner);
+        }
     }
 }
