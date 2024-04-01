@@ -14,7 +14,7 @@ public class Card {
 
     public int getValue() {
         for (int i = 0; i < faces.length; i++) {
-            if (this.face == Card.faces[i]) {
+            if (this.face.equals(Card.faces[i])) {
                 return i + 1;
             }
         }

@@ -1,11 +1,10 @@
 package q1;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class DeckOfCards {
-    private static final SecureRandom randomNumbers = new SecureRandom();
     public static final int MAX_CARDS_IN_DECK = 52;
     private ArrayList<Card> cards;
 
@@ -23,15 +22,7 @@ public class DeckOfCards {
     }
 
     public void shuffle() {
-        for (int firstIndex = 0; firstIndex < cards.size(); firstIndex++) {
-            int secondIndex = randomNumbers.nextInt(MAX_CARDS_IN_DECK);
-
-            // swap first, second
-            Card firstCard = this.cards.get(firstIndex);
-            Card secondCard = this.cards.get(secondIndex);
-            this.cards.set(firstIndex, secondCard);
-            this.cards.set(secondIndex, firstCard);
-        }
+        Collections.shuffle(this.cards);
     }
 
     public Card dealCard() {
