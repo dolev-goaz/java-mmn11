@@ -43,7 +43,7 @@ public class WarGame {
 
     // If the deck is not empty, deals a card from the provided player's deck./
     // Returns null if the deck is empty.
-    public Card dealCard(int playerIndex) {
+    private Card dealCard(int playerIndex) {
         // NOTE: We're passing only the index since we need to fetch two variables relevant to the player,
         // so it's cleaner this way.
         DeckOfCards playerDeck = (playerIndex == FIRST_PLAYER_INDEX)
@@ -61,7 +61,7 @@ public class WarGame {
     }
 
     // Compares the cards of the two cards, taking into account whether one of them is null.
-    public int comparePlayerCards(Card firstPlayerCard, Card secondPlayerCard) {
+    private int comparePlayerCards(Card firstPlayerCard, Card secondPlayerCard) {
         // if both decks were empty
         if ((firstPlayerCard == null) && (secondPlayerCard == null)) {
             // NOTE: this should NEVER happen
@@ -87,7 +87,7 @@ public class WarGame {
     }
 
     // Initiates a war/new war between the players
-    public int War() {
+    private int initiateWar() {
         // draw DOWN_CARDS_PER_WAR cards from each deck
         for (int i = 0; i < DOWN_CARDS_PER_WAR; i++) {
             if (dealCard(FIRST_PLAYER_INDEX) == null) {
@@ -102,18 +102,18 @@ public class WarGame {
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
-            return War();
+            return initiateWar();
         }
         return comparisonResult;
     }
 
-    public int runTurn() {
+    private int runTurn() {
         Card c1 = dealCard(FIRST_PLAYER_INDEX);
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
 
         int comparisonResult = comparePlayerCards(c1, c2);
         if (comparisonResult == 0) {
-            int warResult = War();
+            int warResult = initiateWar();
             notifyListeners_OnWarPlayed(warResult);
             return warResult;
         }
@@ -139,6 +139,8 @@ public class WarGame {
 
     // Here, we use listeners in order to send events from the WarGame instance.
     // This way, we can decouple the actual drawing logic from the WarGame runner.
+    // NOTE: Could put this section on the top of the file, chose to put it at the bottom here because it isn't directly
+    // related to the actual logic
 
     // Register a new listener
     public void addTurnListener(ITurnListener listener) {
