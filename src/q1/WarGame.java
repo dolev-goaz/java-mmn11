@@ -64,10 +64,8 @@ public class WarGame {
     private int comparePlayerCards(Card firstPlayerCard, Card secondPlayerCard) {
         // if both decks were empty
         if ((firstPlayerCard == null) && (secondPlayerCard == null)) {
-            // NOTE: this should NEVER happen
-            // could raise an exception
-            System.out.println("Both decks are out of cards");
-            return -1;
+            // NOTE: this should NEVER happen, could raise an exception
+            return DRAW;
         }
         // if first deck is empty
         if (firstPlayerCard == null) {
@@ -109,7 +107,7 @@ public class WarGame {
         Card c1 = dealCard(FIRST_PLAYER_INDEX);
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
         int comparisonResult = comparePlayerCards(c1, c2);
-        if (comparisonResult == 0) {
+        if ((comparisonResult == DRAW) && (c1 != null)) {
             return initiateWar();
         }
         return comparisonResult;
@@ -120,7 +118,7 @@ public class WarGame {
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
 
         int comparisonResult = comparePlayerCards(c1, c2);
-        if (comparisonResult == DRAW) {
+        if ((comparisonResult == DRAW) && (c1 != null)) {
             int warResult = initiateWar();
             notifyListeners_OnWarPlayed(warResult);
             return warResult;
