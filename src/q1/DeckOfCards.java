@@ -26,14 +26,13 @@ public class DeckOfCards {
         Collections.shuffle(this.cards);
     }
 
-    // Removes and returns the last card from the deck.
+    // Removes and returns the first card from the deck.
     // If the deck is empty, returns null
     public Card dealCard() {
-        final int lastCardIndex = cards.size() - 1;
-        if (lastCardIndex < 0) {
+        if (cards.size() == 0) {
             return null;
         }
-        return cards.remove(lastCardIndex);
+        return cards.remove(0);
     }
 
     // Inserts a single card to the deck
