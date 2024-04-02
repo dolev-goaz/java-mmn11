@@ -107,7 +107,7 @@ public class WarGame {
         return comparisonResult;
     }
 
-    private int runTurn() {
+    private int runTurnInner() {
         Card c1 = dealCard(FIRST_PLAYER_INDEX);
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
 
@@ -121,20 +121,25 @@ public class WarGame {
         return comparisonResult;
     }
 
-    public int runGame() {
-        // NOTE: not really necessary to check if second deck is empty
-        while (!firstPlayerDeck.isEmpty() && !secondPlayerDeck.isEmpty()) {
-            firstPlayerPlayedCards.clear();
-            secondPlayerPlayedCards.clear();
+    public void runTurn() {
+        firstPlayerPlayedCards.clear();
+        secondPlayerPlayedCards.clear();
 
-            int winner = runTurn();
+        int winner = runTurnInner();
 
-            DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
-            winnerDeck.insertEnd(firstPlayerPlayedCards);
-            winnerDeck.insertEnd(secondPlayerPlayedCards);
-        }
+        DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
+        winnerDeck.insertEnd(firstPlayerPlayedCards);
+        winnerDeck.insertEnd(secondPlayerPlayedCards);
+    }
 
+    public boolean isGameOver() {
+        return firstPlayerDeck.isEmpty() || secondPlayerDeck.isEmpty();
+    }
+
+    public int getWinner() {
+        if (!this.isGameOver()) return DRAW;
         return firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
+
     }
 
     // Here, we use listeners in order to send events from the WarGame instance.
