@@ -120,7 +120,7 @@ public class WarGame {
         Card c2 = dealCard(SECOND_PLAYER_INDEX);
 
         int comparisonResult = comparePlayerCards(c1, c2);
-        if (comparisonResult == 0) {
+        if (comparisonResult == DRAW) {
             int warResult = initiateWar();
             notifyListeners_OnWarPlayed(warResult);
             return warResult;
@@ -139,13 +139,14 @@ public class WarGame {
 
         int winner = runTurnInner();
 
+        if (isGameOver()) {
+            // should handle winner = 0 case
+            notifyListeners_OnGameOver();
+            return;
+        }
         DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
         winnerDeck.insertEnd(firstPlayerPlayedCards);
         winnerDeck.insertEnd(secondPlayerPlayedCards);
-
-        if (isGameOver()) {
-            notifyListeners_OnGameOver();
-        }
     }
 
     public boolean isGameOver() {
