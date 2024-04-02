@@ -45,6 +45,7 @@ public class WarGameController implements ITurnListener {
     @FXML
     void onNextTurn(ActionEvent event) {
         if (game.isGameOver()) {
+            // Should not happen, since we disable the button
             return;
         }
         game.runTurn();
@@ -66,6 +67,11 @@ public class WarGameController implements ITurnListener {
         this.player1Log.setText(joinCardsStr(firstPlayerCards));
         this.player2Log.setText(joinCardsStr(secondPlayerCards));
         this.setWinner(winner);
+    }
+
+    @Override
+    public void onGameOver(int winner) {
+        showAlert("Winner", String.format("Player %d won!", winner));
     }
 
     private void setWinner(int winnerIndex) {

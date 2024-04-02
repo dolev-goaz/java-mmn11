@@ -122,6 +122,10 @@ public class WarGame {
     }
 
     public void runTurn() {
+        if (this.isGameOver()) {
+            notifyListeners_OnGameOver();
+            return;
+        }
         firstPlayerPlayedCards.clear();
         secondPlayerPlayedCards.clear();
 
@@ -130,16 +134,20 @@ public class WarGame {
         DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
         winnerDeck.insertEnd(firstPlayerPlayedCards);
         winnerDeck.insertEnd(secondPlayerPlayedCards);
+
+        if (isGameOver()) {
+            notifyListeners_OnGameOver();
+        }
     }
 
     public boolean isGameOver() {
         return firstPlayerDeck.isEmpty() || secondPlayerDeck.isEmpty();
     }
-
     public int getWinner() {
-        if (!this.isGameOver()) return DRAW;
-        return firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
-
+        if (this.firstPlayerDeck.isEmpty() && this.secondPlayerDeck.isEmpty()) {
+            return DRAW;
+        }
+        return this.firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
     }
 
     // Here, we use listeners in order to send events from the WarGame instance.
@@ -169,4 +177,13 @@ public class WarGame {
             listener.onWarPlayed(this.firstPlayerPlayedCards, this.secondPlayerPlayedCards, winner);
         }
     }
+
+    // Notify listeners about the game's winner
+    private void notifyListeners_OnGameOver() {
+        int winner = this.getWinner();
+        for (ITurnListener listener : cardListeners) {
+            listener.onGameOver(winner);
+        }
+    }
+
 }
