@@ -22,12 +22,12 @@
             <RowConstraints maxHeight="404.0" minHeight="10.0" prefHeight="404.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="שחקן 2" textAlignment="CENTER" wrappingWidth="295.0" GridPane.columnIndex="1">
+            <Text fx:id="player2Header" strokeType="OUTSIDE" strokeWidth="0.0" text="שחקן 2" textAlignment="CENTER" wrappingWidth="295.0" GridPane.columnIndex="1">
                <font>
                   <Font size="36.0" />
                </font>
             </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="שחקן 1" textAlignment="CENTER" wrappingWidth="299.0">
+            <Text fx:id="player1Header" strokeType="OUTSIDE" strokeWidth="0.0" text="שחקן 1" textAlignment="CENTER" wrappingWidth="299.0">
                <font>
                   <Font size="36.0" />
                </font>

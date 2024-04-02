@@ -4,14 +4,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
-public class WarGameController {
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class WarGameController implements ITurnListener {
     WarGame game;
     public void initialize() {
-        ITurnListener listener = new FXTurnListener();
         this.game = new WarGame();
         game.initializeGame();
-        game.addTurnListener(listener);
+        game.addTurnListener(this);
     }
 
     private static void showAlert(String title, String message) {
@@ -29,6 +34,12 @@ public class WarGameController {
     private TextArea player2Log;
 
     @FXML
+    private Text player1Header;
+
+    @FXML
+    private Text player2Header;
+
+    @FXML
     private Button button;
 
     @FXML
@@ -42,4 +53,39 @@ public class WarGameController {
         }
     }
 
+    @Override
+    public void onTurnPlayed(Card firstPlayerCard, Card secondPlayerCard, int winner) {
+        this.player1Log.setText(firstPlayerCard.toString());
+        this.player2Log.setText(secondPlayerCard.toString());
+
+        this.setWinner(winner);
+    }
+
+    @Override
+    public void onWarPlayed(ArrayList<Card> firstPlayerCards, ArrayList<Card> secondPlayerCards, int winner) {
+        this.player1Log.setText(joinCardsStr(firstPlayerCards));
+        this.player2Log.setText(joinCardsStr(secondPlayerCards));
+        this.setWinner(winner);
+    }
+
+    private void setWinner(int winnerIndex) {
+        this.player1Header.setFill(Color.BLACK);
+        this.player1Header.setUnderline(false);
+        this.player2Header.setFill(Color.BLACK);
+        this.player2Header.setUnderline(false);
+
+        Text header = (winnerIndex == 1)? this.player1Header: this.player2Header;
+        header.setFill(Color.GREEN);
+        header.setUnderline(true);
+    }
+
+    private String joinCardsStr(ArrayList<Card> cards) {
+        return IntStream.range(0, cards.size())
+                .mapToObj(i -> {
+                    boolean isCardCompared = (i % (WarGame.DOWN_CARDS_PER_WAR + 1)) == 0;
+                    String prefix = isCardCompared? "": "\t"; // non-compared cards are pushed for better visualization
+                    return prefix + cards.get(i).toString();
+                })
+                .collect(Collectors.joining("\n"));
+    }
 }
