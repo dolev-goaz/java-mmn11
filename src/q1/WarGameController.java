@@ -40,7 +40,7 @@ public class WarGameController implements ITurnListener {
     private Text player2Header;
 
     @FXML
-    private Button button;
+    private Button nextTurnButton;
 
     @FXML
     void onNextTurn(ActionEvent event) {
@@ -50,7 +50,7 @@ public class WarGameController implements ITurnListener {
         }
         game.runTurn();
         if (game.isGameOver()) {
-            this.button.setDisable(true);
+            nextTurnButton.setDisable(true);
         }
     }
 

@@ -36,6 +36,6 @@
             <TextArea fx:id="player2Log" editable="false" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <Button fx:id="NextTurnBtn" mnemonicParsing="false" onAction="#onNextTurn" prefHeight="31.0" prefWidth="89.0" text="Next Turn" />
+      <Button fx:id="nextTurnButton" mnemonicParsing="false" onAction="#onNextTurn" prefHeight="31.0" prefWidth="89.0" text="Next Turn" />
    </children>
 </VBox>
