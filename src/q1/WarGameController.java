@@ -69,14 +69,20 @@ public class WarGameController implements ITurnListener {
     }
 
     private void setWinner(int winnerIndex) {
-        this.player1Header.setFill(Color.BLACK);
-        this.player1Header.setUnderline(false);
-        this.player2Header.setFill(Color.BLACK);
-        this.player2Header.setUnderline(false);
+        Text winnerHeader, loserHeader;
 
-        Text header = (winnerIndex == 1)? this.player1Header: this.player2Header;
-        header.setFill(Color.GREEN);
-        header.setUnderline(true);
+        if (winnerIndex == 1) {
+            winnerHeader = this.player1Header;
+            loserHeader = this.player2Header;
+        } else {
+            winnerHeader = this.player2Header;
+            loserHeader = this.player1Header;
+        }
+
+        winnerHeader.setFill(Color.GREEN);
+        winnerHeader.setUnderline(true);
+        loserHeader.setFill(Color.RED);
+        loserHeader.setUnderline(false);
     }
 
     private String joinCardsStr(ArrayList<Card> cards) {
