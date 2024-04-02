@@ -90,10 +90,18 @@ public class WarGame {
     private int initiateWar() {
         // draw DOWN_CARDS_PER_WAR cards from each deck
         for (int i = 0; i < DOWN_CARDS_PER_WAR; i++) {
-            if (dealCard(FIRST_PLAYER_INDEX) == null) {
+            Card downCard1 = dealCard(FIRST_PLAYER_INDEX);
+            Card downCard2 = dealCard(SECOND_PLAYER_INDEX);
+            if (downCard1 == null && downCard2 == null) {
+                // both players ran out of cards at the same time
+                return DRAW;
+            }
+            if (downCard1 == null) {
+                // first player ran out of cards while second player didn't
                 return SECOND_PLAYER_INDEX;
             }
-            if (dealCard(SECOND_PLAYER_INDEX) == null) {
+            if (downCard2 == null) {
+                // second player ran out of cards while first player didn't
                 return FIRST_PLAYER_INDEX;
             }
         }
