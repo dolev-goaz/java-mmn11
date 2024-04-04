@@ -11,12 +11,12 @@ public class WarGame {
 
     private Collection<ITurnListener> cardListeners = new ArrayList<>();
 
-    DeckOfCards firstPlayerDeck;
-    DeckOfCards secondPlayerDeck;
+    private DeckOfCards firstPlayerDeck;
+    private DeckOfCards secondPlayerDeck;
 
     // these collect the cards played by each player during the turn
-    ArrayList<Card> firstPlayerPlayedCards;
-    ArrayList<Card> secondPlayerPlayedCards;
+    private ArrayList<Card> firstPlayerPlayedCards;
+    private ArrayList<Card> secondPlayerPlayedCards;
 
     public WarGame() {
         firstPlayerDeck = new DeckOfCards();
@@ -39,6 +39,39 @@ public class WarGame {
             firstPlayerDeck.insertEnd(deck.dealCard());
             secondPlayerDeck.insertEnd(deck.dealCard());
         }
+    }
+
+    public void runTurn() {
+        if (this.isGameOver()) {
+            notifyListeners_OnGameOver();
+            return;
+        }
+        firstPlayerPlayedCards.clear();
+        secondPlayerPlayedCards.clear();
+
+        int winner = runTurnInner();
+
+        if (isGameOver()) {
+            // should handle winner = 0 case
+            notifyListeners_OnGameOver();
+            return;
+        }
+        DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
+        winnerDeck.insertEnd(firstPlayerPlayedCards);
+        winnerDeck.insertEnd(secondPlayerPlayedCards);
+    }
+
+    // Checks whether any deck is depleted
+    public boolean isGameOver() {
+        return firstPlayerDeck.isEmpty() || secondPlayerDeck.isEmpty();
+    }
+
+    // Returns player index
+    public int getWinner() {
+        if (this.firstPlayerDeck.isEmpty() && this.secondPlayerDeck.isEmpty()) {
+            return DRAW;
+        }
+        return this.firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
     }
 
     // If the deck is not empty, deals a card from the provided player's deck./
@@ -127,36 +160,6 @@ public class WarGame {
         return comparisonResult;
     }
 
-    public void runTurn() {
-        if (this.isGameOver()) {
-            notifyListeners_OnGameOver();
-            return;
-        }
-        firstPlayerPlayedCards.clear();
-        secondPlayerPlayedCards.clear();
-
-        int winner = runTurnInner();
-
-        if (isGameOver()) {
-            // should handle winner = 0 case
-            notifyListeners_OnGameOver();
-            return;
-        }
-        DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
-        winnerDeck.insertEnd(firstPlayerPlayedCards);
-        winnerDeck.insertEnd(secondPlayerPlayedCards);
-    }
-
-    public boolean isGameOver() {
-        return firstPlayerDeck.isEmpty() || secondPlayerDeck.isEmpty();
-    }
-    public int getWinner() {
-        if (this.firstPlayerDeck.isEmpty() && this.secondPlayerDeck.isEmpty()) {
-            return DRAW;
-        }
-        return this.firstPlayerDeck.isEmpty()? SECOND_PLAYER_INDEX: FIRST_PLAYER_INDEX;
-    }
-
     // Here, we use listeners in order to send events from the WarGame instance.
     // This way, we can decouple the actual drawing logic from the WarGame runner.
     // NOTE: Could put this section on the top of the file, chose to put it at the bottom here because it isn't directly
@@ -192,5 +195,4 @@ public class WarGame {
             listener.onGameOver(winner);
         }
     }
-
 }
