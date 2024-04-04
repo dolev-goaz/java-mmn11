@@ -4,8 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.HashSet;
@@ -21,8 +19,9 @@ public class randomMatrixController {
     private static final int SQUARE_COUNT_ROW = 30;
     private static final int SQUARE_COUNT_COL = 30;
 
-    @FXML
-    private Button fillButton;
+    private static final Color SQUARE_COLOR = Color.BLACK;
+    private static final Color GRID_COLOR = Color.BLACK;
+    private static final Color BACKGROUND_COLOR = Color.WHITE;
 
     @FXML
     private Canvas matrixCanvas;
@@ -44,12 +43,12 @@ public class randomMatrixController {
     }
 
     private void clear() {
-        gc.setFill(Color.WHITE);
+        gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, matrixCanvas.getWidth(), matrixCanvas.getHeight());
     }
 
     private void drawGrid() {
-        gc.setStroke(Color.GRAY);
+        gc.setStroke(GRID_COLOR);
         gc.setLineWidth(BORDER_WIDTH);
 
         double borderOffset = BORDER_WIDTH / 2.0;
@@ -88,7 +87,7 @@ public class randomMatrixController {
 
         int x = col * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH;
         int y = row * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH;
-        gc.setFill(Color.LIGHTBLUE);
+        gc.setFill(SQUARE_COLOR);
         gc.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
     }
 
