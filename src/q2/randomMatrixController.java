@@ -18,12 +18,8 @@ public class randomMatrixController {
     private static final double FILL_RATIO = 0.1; // 10%
 
     // CUSTOMIZABLE
-    private static final int SQUARE_COUNT_ROW = 50;
+    private static final int SQUARE_COUNT_ROW = 30;
     private static final int SQUARE_COUNT_COL = 30;
-    private static final int BUTTON_HEIGHT = 30;
-
-    @FXML
-    private VBox container;
 
     @FXML
     private Button fillButton;
@@ -45,10 +41,6 @@ public class randomMatrixController {
         matrixCanvas.setHeight(SQUARE_COUNT_COL * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH);
         // each square has a top border, and the last square has a bottom border
         matrixCanvas.setWidth(SQUARE_COUNT_ROW * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH);
-
-        fillButton.setPrefHeight(BUTTON_HEIGHT);
-        container.setPrefHeight(BUTTON_HEIGHT + matrixCanvas.getHeight());
-        container.setPrefWidth(matrixCanvas.getWidth());
     }
 
     private void clear() {
