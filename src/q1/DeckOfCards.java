@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+// Represents a deck of playing cards
 public class DeckOfCards {
     public static final int MAX_CARDS_IN_DECK = 52;
     private ArrayList<Card> cards;

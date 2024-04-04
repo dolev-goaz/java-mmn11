@@ -3,6 +3,7 @@ package q1;
 import java.util.ArrayList;
 import java.util.Collection;
 
+// manages the game's flow
 public class WarGame {
     private static final int DRAW = 0;
     private static final int FIRST_PLAYER_INDEX = 1;
@@ -26,7 +27,8 @@ public class WarGame {
         secondPlayerPlayedCards = new ArrayList<Card>();
     }
 
-    // Extracted from the constructor to allow multiple games to be played on the same instance
+    // Extracted from the constructor to allow multiple games to be played on the same instance,
+    // initializes a new game
     public void initializeGame() {
         firstPlayerDeck.clear();
         secondPlayerDeck.clear();
@@ -41,9 +43,10 @@ public class WarGame {
         }
     }
 
+    // runs a singule turn
     public void runTurn() {
         if (this.isGameOver()) {
-            notifyListeners_OnGameOver();
+            notifyListenersOnGameOver();
             return;
         }
         firstPlayerPlayedCards.clear();
@@ -53,10 +56,10 @@ public class WarGame {
 
         if (isGameOver()) {
             // should handle winner = 0 case
-            notifyListeners_OnGameOver();
+            notifyListenersOnGameOver();
             return;
         }
-        DeckOfCards winnerDeck = winner == 1? firstPlayerDeck : secondPlayerDeck;
+        DeckOfCards winnerDeck = (winner == FIRST_PLAYER_INDEX)? firstPlayerDeck : secondPlayerDeck;
         winnerDeck.insertEnd(firstPlayerPlayedCards);
         winnerDeck.insertEnd(secondPlayerPlayedCards);
     }
@@ -66,7 +69,7 @@ public class WarGame {
         return firstPlayerDeck.isEmpty() || secondPlayerDeck.isEmpty();
     }
 
-    // Returns player index
+    // Returns winning player's index
     public int getWinner() {
         if (this.firstPlayerDeck.isEmpty() && this.secondPlayerDeck.isEmpty()) {
             return DRAW;
@@ -153,10 +156,10 @@ public class WarGame {
         int comparisonResult = comparePlayerCards(c1, c2);
         if ((comparisonResult == DRAW) && (c1 != null)) {
             int warResult = initiateWar();
-            notifyListeners_OnWarPlayed(warResult);
+            notifyListenersOnWarPlayed(warResult);
             return warResult;
         }
-        notifyListeners_OnTurnPlayed(comparisonResult);
+        notifyListenersOnTurnPlayed(comparisonResult);
         return comparisonResult;
     }
 
@@ -171,7 +174,7 @@ public class WarGame {
     }
 
     // Notify listeners about the turn being played
-    private void notifyListeners_OnTurnPlayed(int winner) {
+    private void notifyListenersOnTurnPlayed(int winner) {
         // NOTE: assumes both players have played one card.
         Card firstPlayerCard = this.firstPlayerPlayedCards.get(0);
         Card secondPlayerCard = this.secondPlayerPlayedCards.get(0);
@@ -182,14 +185,14 @@ public class WarGame {
     }
 
     // Notify listeners about a war being played
-    private void notifyListeners_OnWarPlayed(int winner) {
+    private void notifyListenersOnWarPlayed(int winner) {
         for (ITurnListener listener : cardListeners) {
             listener.onWarPlayed(this.firstPlayerPlayedCards, this.secondPlayerPlayedCards, winner);
         }
     }
 
     // Notify listeners about the game's winner
-    private void notifyListeners_OnGameOver() {
+    private void notifyListenersOnGameOver() {
         int winner = this.getWinner();
         for (ITurnListener listener : cardListeners) {
             listener.onGameOver(winner);

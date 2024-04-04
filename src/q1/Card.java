@@ -1,5 +1,6 @@
 package q1;
 
+// Represents a playing card
 public class Card {
     public static final String[] faces = {"Ace", "Deuce", "Three", "Four", "Five", "Six",
             "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
@@ -12,6 +13,7 @@ public class Card {
         this.suit = suit;
     }
 
+    // returns the value of the card(by face)
     public int getValue() {
         for (int i = 0; i < faces.length; i++) {
             if (this.face.equals(Card.faces[i])) {

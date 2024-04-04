@@ -1,6 +1,5 @@
 package q2;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,7 +8,7 @@ import javafx.scene.paint.Color;
 import java.util.HashSet;
 import java.util.Random;
 
-public class randomMatrixController {
+public class RandomMatrixController {
 
     private static final int BORDER_WIDTH = 2;
     private static final int SQUARE_SIZE = 10;
@@ -28,6 +27,7 @@ public class randomMatrixController {
 
     private GraphicsContext gc;
 
+    // initializes the screen
     public void initialize() {
         setComponentsHeights();
 
@@ -35,6 +35,7 @@ public class randomMatrixController {
         drawCanvas(); // initial draw
     }
 
+    // sets the height of dynamic components affected by the count of squares in each row/col
     private void setComponentsHeights() {
         // each square has a left border, and the last square also has a right border
         matrixCanvas.setHeight(SQUARE_COUNT_COL * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH);
@@ -42,12 +43,14 @@ public class randomMatrixController {
         matrixCanvas.setWidth(SQUARE_COUNT_ROW * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH);
     }
 
+    // clears the canvas
     private void clear() {
         // paint the entire screen
         gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, matrixCanvas.getWidth(), matrixCanvas.getHeight());
     }
 
+    // draws the grid
     private void drawGrid() {
         gc.setStroke(GRID_COLOR);
         gc.setLineWidth(BORDER_WIDTH);
@@ -70,6 +73,7 @@ public class randomMatrixController {
         }
     }
 
+    // draws a percentage of all possible squares, randomly
     private void fillRandomly()  {
         Random random = new Random();
         // set containing all positions we randomly chose to fill
@@ -92,6 +96,7 @@ public class randomMatrixController {
         }
     }
 
+    // draws a square at a provided position
     private void fillSquare(int position) {
         // calculate grid coordinates based on the provided position
         int col = position % SQUARE_COUNT_ROW;
@@ -106,6 +111,7 @@ public class randomMatrixController {
         gc.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
     }
 
+    // executes the entire drawing operation- clearing, drawing grid, drawing random squares
     private void drawCanvas() {
         this.clear();
         this.drawGrid();

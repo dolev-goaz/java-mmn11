@@ -29,12 +29,14 @@ public class WarGameController implements ITurnListener {
     @FXML
     private Button nextTurnButton;
 
+    // initializes a new game instance
     public void initialize() {
         this.game = new WarGame();
         game.initializeGame();
         game.addTurnListener(this);
     }
 
+    // shows an alert with the provided title and content
     private static void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -77,6 +79,7 @@ public class WarGameController implements ITurnListener {
         showAlert("Winner", String.format("Player %d won!", winner));
     }
 
+    // sets the winner in the UI
     private void setWinner(int winnerIndex) {
         Text winnerHeader, loserHeader;
 
@@ -94,6 +97,7 @@ public class WarGameController implements ITurnListener {
         loserHeader.setUnderline(false);
     }
 
+    // returns a string representation for a WAR being played
     private String joinCardsStr(ArrayList<Card> cards) {
         return IntStream.range(0, cards.size())
                 .mapToObj(i -> {
