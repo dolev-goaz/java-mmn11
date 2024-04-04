@@ -32,7 +32,7 @@ public class randomMatrixController {
         setComponentsHeights();
 
         gc = matrixCanvas.getGraphicsContext2D();
-        drawCanvas();
+        drawCanvas(); // initial draw
     }
 
     private void setComponentsHeights() {
@@ -43,6 +43,7 @@ public class randomMatrixController {
     }
 
     private void clear() {
+        // paint the entire screen
         gc.setFill(BACKGROUND_COLOR);
         gc.fillRect(0, 0, matrixCanvas.getWidth(), matrixCanvas.getHeight());
     }
@@ -53,12 +54,14 @@ public class randomMatrixController {
 
         double borderOffset = BORDER_WIDTH / 2.0;
 
+        // vertical lines
         for (int colIndex = 0; colIndex <= SQUARE_COUNT_ROW; colIndex++) {
             double colX = colIndex * (SQUARE_SIZE + BORDER_WIDTH) + borderOffset;
             gc.moveTo(colX, 0);
             gc.lineTo(colX, matrixCanvas.getHeight());
             gc.stroke();
         }
+        // horizontal lines
         for (int rowIndex = 0; rowIndex <= SQUARE_COUNT_COL; rowIndex++) {
             double rowY = rowIndex * (SQUARE_SIZE + BORDER_WIDTH) + borderOffset;
             gc.moveTo(0, rowY);
@@ -69,24 +72,36 @@ public class randomMatrixController {
 
     private void fillRandomly()  {
         Random random = new Random();
+        // set containing all positions we randomly chose to fill
         HashSet<Integer> filledSquares = new HashSet<>();
+
+        // the amount of squares we need to fill
         int fillCount = (int)(SQUARE_COUNT_ROW * SQUARE_COUNT_COL * FILL_RATIO);
+
+        // while we haven't met the quota
         while (filledSquares.size() < fillCount) {
+            // generate a new random position
             int position = random.nextInt(SQUARE_COUNT_COL * SQUARE_COUNT_ROW);
             if (filledSquares.contains(position)) {
+                // if it's a position we already encountered- pass
                 continue;
             }
+            // add the position to the set, draw the square in that position
             filledSquares.add(position);
             this.fillSquare(position);
         }
     }
 
     private void fillSquare(int position) {
+        // calculate grid coordinates based on the provided position
         int col = position % SQUARE_COUNT_ROW;
-        int row = (int)(position / SQUARE_COUNT_ROW);
+        int row = position / SQUARE_COUNT_ROW; // Rounded down(truncated)
 
+        // convert from grid coordinates to canvas coordinates
         int x = col * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH;
         int y = row * (SQUARE_SIZE + BORDER_WIDTH) + BORDER_WIDTH;
+
+        // draw
         gc.setFill(SQUARE_COLOR);
         gc.fillRect(x, y, SQUARE_SIZE, SQUARE_SIZE);
     }
@@ -98,7 +113,8 @@ public class randomMatrixController {
     }
 
     @FXML
-    void onRandomFill(ActionEvent event) {
+    void onRandomFill() {
+        // no need for the event parameter since it isn't used
         drawCanvas();
     }
 
