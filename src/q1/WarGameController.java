@@ -12,20 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class WarGameController implements ITurnListener {
-    WarGame game;
-    public void initialize() {
-        this.game = new WarGame();
-        game.initializeGame();
-        game.addTurnListener(this);
-    }
-
-    private static void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+    private WarGame game;
 
     @FXML
     private TextArea player1Log;
@@ -41,6 +28,20 @@ public class WarGameController implements ITurnListener {
 
     @FXML
     private Button nextTurnButton;
+
+    public void initialize() {
+        this.game = new WarGame();
+        game.initializeGame();
+        game.addTurnListener(this);
+    }
+
+    private static void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     @FXML
     void onNextTurn(ActionEvent event) {
