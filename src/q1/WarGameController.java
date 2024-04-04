@@ -44,7 +44,9 @@ public class WarGameController implements ITurnListener {
     }
 
     @FXML
-    void onNextTurn(ActionEvent event) {
+    void onNextTurn() {
+        // no need to receive action event parameter
+
         if (game.isGameOver()) {
             // Should not happen, since we disable the button
             return;
