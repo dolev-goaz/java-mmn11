@@ -1,4 +1,4 @@
-package main;
+package q2;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,10 +10,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // FOR q1
-//        Parent root = FXMLLoader.load(getClass().getResource("../q1/WarGame.fxml"));
-//        primaryStage.setTitle("War Game");
-        // FOR q2
         Parent root = FXMLLoader.load(getClass().getResource("../q2/matrix.fxml"));
         primaryStage.setTitle("Matrix");
         primaryStage.setScene(new Scene(root));
